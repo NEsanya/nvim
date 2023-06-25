@@ -7,7 +7,13 @@ local servers = {
   {
     server = 'lua_ls',
     config = {
-      globals = { 'vim' }
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { 'vim' }
+          }
+        }
+      }
     }
   }
 }

@@ -6,7 +6,7 @@ end
 
 -- If there's no git - stop
 local fn = vim.fn
-if pcall(function() fn.system({ 'aboba' }) end) then
+if not pcall(function() fn.system({ 'git' }) end) then
   print 'Look at this baka who still doesn\'t install git, hahaha~!'
   return
 end
