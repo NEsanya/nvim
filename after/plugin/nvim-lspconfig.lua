@@ -15,7 +15,9 @@ local servers = {
         }
       }
     }
-  }
+  },
+  'dockerls',
+  'docker_compose_language_service'
 }
 
 local function tableMerge(t1, t2)
