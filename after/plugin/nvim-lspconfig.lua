@@ -2,7 +2,19 @@ local lspconfig = require 'lspconfig'
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local servers = {
-  'clangd',
+  {
+    server = 'clangd',
+    config = {
+      format_function = function(filepath)
+        if vim.fn.executable('indent') == 1 then
+          local output = vim.fn.system { 'indent', filepath, '-o', filepath }
+          print(output)
+        else
+          vim.lsp.buf.format()
+        end
+      end
+    }
+  },
   'pyright',
   {
     server = 'lua_ls',
@@ -35,6 +47,22 @@ local function tableMerge(t1, t2)
   return t1
 end
 
+function FORMAT_FILE()
+  if vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(0), 'readonly') then
+    return
+  end
+
+  for _, client in ipairs(vim.lsp.buf_get_clients()) do
+    local format_function = client.config.format_function
+    if format_function then
+      format_function(vim.api.nvim_buf_get_name(0))
+    else
+      vim.lsp.buf.format()
+    end
+  end
+end
+
+vim.cmd [[autocmd BufWritePre <buffer> lua FORMAT_FILE()]]
 
 for _, lsp in ipairs(servers) do
   local config = {
@@ -48,7 +76,6 @@ for _, lsp in ipairs(servers) do
   end
 end
 
-vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),
   callback = function(ev)
