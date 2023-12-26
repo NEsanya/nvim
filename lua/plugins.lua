@@ -12,22 +12,21 @@ end
 local packer_bootstrap = ensure_packer()
 
 return require('packer').startup(function(use)
+  -- Packer itself
   use 'wbthomason/packer.nvim'
-
-  -- LSP
-  use 'neovim/nvim-lspconfig'
 
   -- Theme
   use {
-    "catppuccin/nvim",
-    as = "catppuccin",
+    'Mofiqul/dracula.nvim',
     config = function()
-      require('catppuccin').setup {
-        flavour = 'macchiato'
-      }
-      vim.cmd.colorscheme 'catppuccin'
+      local dracula = require("dracula")
+      dracula.setup({ colors = dracula.colors() })
+      vim.cmd [[colorscheme dracula]]
     end
   }
+
+  -- LSP
+  use 'neovim/nvim-lspconfig'
 
   -- Status line
   use {
@@ -56,10 +55,23 @@ return require('packer').startup(function(use)
     require('packer').sync()
   end
 
+  -- Git diff in code
   use {
     'lewis6991/gitsigns.nvim',
     config = function()
       require('gitsigns').setup()
+    end
+  }
+
+  -- Magit in neovim
+  use {
+    'NeogitOrg/neogit',
+    requires = {
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim'
+    },
+    config = function()
+      require('neogit').setup {}
     end
   }
 
@@ -80,15 +92,20 @@ return require('packer').startup(function(use)
     end
   }
 
-  -- Colorized brakets and lines
+  -- Indent
+  use 'lukas-reineke/indent-blankline.nvim'
+
+  -- Colorized brackets
+  use 'HiPhish/rainbow-delimiters.nvim'
+
+  -- Telescope
   use {
-    'lukas-reineke/indent-blankline.nvim',
+    'nvim-telescope/telescope.nvim',
+    branch = '0.1.x',
+    requires = { { 'nvim-lua/plenary.nvim' } },
     config = function()
-      require('indent_blankline').setup {
-        space_char_blankline = ' ',
-        show_current_context = true,
-        show_current_context_start = true,
-      }
+      local builtin = require('telescope.builtin')
+      vim.keymap.set('n', '<C-f>f', builtin.find_files, {})
     end
   }
 end)

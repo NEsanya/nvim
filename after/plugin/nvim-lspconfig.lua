@@ -2,19 +2,7 @@ local lspconfig = require 'lspconfig'
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local servers = {
-  {
-    server = 'clangd',
-    config = {
-      format_function = function(filepath)
-        if vim.fn.executable('indent') == 1 then
-          local output = vim.fn.system { 'indent', filepath, '-o', filepath }
-          print(output)
-        else
-          vim.lsp.buf.format()
-        end
-      end
-    }
-  },
+  'clangd',
   'pyright',
   {
     server = 'lua_ls',
